@@ -54,7 +54,7 @@ def send_msg_to_discord(msg: str) -> None:
 if __name__ == "__main__":
     recent_articles = fetch_recent_articles()
     today = datetime.today().strftime("%B %d, %Y")
-    msg = f"**{today}**"
+    msg = f"**{today}**\n\n"
     for i, article in enumerate(recent_articles):
         msg += f"**{article['title']}**\n" + \
             f"{article['summary']}\n" + \
