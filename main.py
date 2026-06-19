@@ -1,7 +1,7 @@
 import io
 import json
 import os
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, UTC
 
 import feedparser
 import requests
@@ -30,19 +30,21 @@ def get_entry_published_date(entry) -> date | None:
     return None
 
 
-def fetch_articles_from_prev_day() -> list[dict]:
+def fetch_articles_from_given_date(date: date) -> list[dict]:
     """
-    Fetch articles from the RSS feed published on the previous calendar day.
+    Fetch articles from the RSS feed published on the given date.
+
+    Args:
+        date (date): The publication date to filter articles by.
 
     Returns:
-        list[dict]: A list of articles published yesterday.
+        list[dict]: A list of articles published on the given date.
     """
     feed = feedparser.parse(RSS_URL)
-    yesterday = date.today() - timedelta(days=1)
     recent = []
     for entry in feed.entries:
         published_date = get_entry_published_date(entry)
-        if published_date != yesterday:
+        if published_date != date:
             continue
 
         recent.append({
@@ -102,8 +104,8 @@ def send_digest_to_discord(text_content: str, date: date) -> None:
 
 
 if __name__ == "__main__":
-    recent_articles = fetch_articles_from_prev_day()
-    yesterday = date.today() - timedelta(days=1)
+    yesterday = datetime.now(UTC).date() - timedelta(days=1)
+    recent_articles = fetch_articles_from_given_date(yesterday)
     if not recent_articles:
         requests.post(
             WEBHOOK_URL, 
