@@ -2,7 +2,7 @@ name: Daily News Report
 
 on:
     schedule:
-        - cron: "4 5 * * *"
+        - cron: "4 3 * * *"
           timezone: America/Toronto
 
     workflow_dispatch:
