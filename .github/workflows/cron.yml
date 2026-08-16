@@ -11,6 +11,9 @@ jobs:
     fetch-news:
         runs-on: ubuntu-latest
 
+        permissions:
+            contents: write
+
         steps:
             - name: Checkout repository
               uses: actions/checkout@v6
@@ -25,3 +28,13 @@ jobs:
               env:
                   DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
               run: uv run main.py
+            
+            - name: Log run and commit
+              run: |
+                  mkdir -p logs
+                  echo "$(date -u +'%Y-%m-%dT%H:%M:%SZ') - workflow ran" >> logs/run-log.txt
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add logs/run-log.txt
+                  git commit -m "chore: log workflow run" || echo "No changes to commit"
+                  git push
